@@ -3,117 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campionato Bocce</title>
-<style>body { font-family: Arial, sans-serif; margin: 20px; background: #f0f8ff; } /* azzurro chiaro */
-button { background: #ff5722; color: #fff; border: none; border-radius: 5px; } /* arancione per i pulsanti */
-th { background: #ffe0b2; } /* intestazioni tabella beige chiaro */
-body<div style="text-align:center; margin-bottom:15px;">
-  <img src="logo.png" alt="ASD Bocciofila Marghine Borore" style="height:80px;">
-</div> { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-h1 { text-align: center; }
-section { background: #fff; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-input, select, button {
-  width: 100%; padding: 8px; margin: 5px 0;
-}
-button { background: #1976d2; color: #fff; border: none; border-radius: 5px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-th { background: #eee; }
+<title>Campionato Bocce 2ª Categoria</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f0f8ff; }
+  button { background: #ff5722; color: #fff; border: none; border-radius: 5px; padding: 8px 12px; margin: 5px; cursor: pointer; }
+  th { background: #ffe0b2; padding: 8px; }
+  td { padding: 5px; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
+  .logo { text-align: center; margin-bottom: 15px; }
 </style>
 </head>
-
 <body>
 
-<h1>Campionato di Bocce</h1>
+<div class="logo">
+  <img src="logo.png" alt="ASD Bocciofila Marghine Borore" style="height:80px;">
+</div>
 
-<section>
-<h2>➕ Aggiungi Squadra</h2>
-<input id="teamName" placeholder="Nome squadra">
-<button onclick="addTeam()">Aggiungi</button>
-</section>
+<h2>Campionato Bocce 2ª Categoria - Squadre</h2>
 
-<section>
-<h2>🎯 Inserisci Risultato</h2>
-<select id="teamA"></select>
-<input id="scoreA" type="number" placeholder="Punti squadra A">
-<select id="teamB"></select>
-<input id="scoreB" type="number" placeholder="Punti squadra B">
-<button onclick="addMatch()">Salva Risultato</button>
-</section>
-
-<section>
-<h2>📊 Classifica</h2>
-<table>
-<thead>
-<tr>
-<th>Squadra</th>
-<th>PG</th>
-<th>V</th>
-<th>S</th>
-<th>Punti</th>
-</tr>
-</thead>
-<tbody id="table"></tbody>
-</table>
-</section>
-
-<script>
-let teams = JSON.parse(localStorage.getItem("teams")) || {};
-let matches = JSON.parse(localStorage.getItem("matches")) || [];
-
-function save() {
-  localStorage.setItem("teams", JSON.stringify(teams));
-  localStorage.setItem("matches", JSON.stringify(matches));
-}
-
-function addTeam() {
-  const name = teamName.value.trim();
-  if (!name || teams[name]) return;
-  teams[name] = { pg:0, v:0, s:0, p:0 };
-  teamName.value = "";
-  save();
-  refresh();
-}
-
-function addMatch() {
-  const a = teamA.value;
-  const b = teamB.value;
-  const sa = parseInt(scoreA.value);
-  const sb = parseInt(scoreB.value);
-  if (!a || !b || a===b || isNaN(sa) || isNaN(sb)) return;
-
-  teams[a].pg++; teams[b].pg++;
-  teams[a].p += sa; teams[b].p += sb;
-
-  if (sa > sb) { teams[a].v++; teams[b].s++; }
-  else { teams[b].v++; teams[a].s++; }
-
-  matches.push({a,b,sa,sb});
-  scoreA.value = ""; scoreB.value = "";
-  save();
-  refresh();
-}
-
-function refresh() {
-  teamA.innerHTML = teamB.innerHTML = "";
-  for (let t in teams) {
-    teamA.innerHTML += `<option>${t}</option>`;
-    teamB.innerHTML += `<option>${t}</option>`;
-  }
-
-  table.innerHTML = "";
-  Object.keys(teams)
-    .sort((a,b)=>teams[b].v-teams[a].v || teams[b].p-teams[a].p)
-    .forEach(t=>{
-      const x = teams[t];
-      table.innerHTML += `<tr>
-        <td>${t}</td><td>${x.pg}</td><td>${x.v}</td><td>${x.s}</td><td>${x.p}</td>
-      </tr>`;
-    });
-}
-
-refresh();
-</script>
+<!-- Qui ci saranno le tue tabelle e pulsanti per le squadre -->
+<p>Inserisci squadre, risultati e classifica qui.</p>
 
 </body>
-</html> 
+</html>
