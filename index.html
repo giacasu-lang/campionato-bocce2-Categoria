@@ -2,113 +2,70 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campionato Bocce 2ª Categoria</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 20px; background: #f0f8ff; }
-  button { background: #ff5722; color: #fff; border: none; border-radius: 5px; padding: 8px 12px; margin: 5px; cursor: pointer; }
-  th { background: #ffe0b2; padding: 8px; }
-  td { padding: 5px; }
-  table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
-  .logo { text-align: center; margin-bottom: 15px; }
-  input { padding: 5px; margin: 3px; }
-</style>
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-
-  // Configura Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyCgQZG0pqKXl9k_umgPOTFRlGLXiH04su4",
-    authDomain: "campionatobocce.firebaseapp.com",
-    projectId: "campionatobocce",
-    storageBucket: "campionatobocce.firebasestorage.app",
-    messagingSenderId: "848729533933",
-    appId: "1:848729533933:web:3f66830a54c2accb060be4"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-
-  // Controlla login
-  onAuthStateChanged(auth, (user) => {
-    if(user){
-      document.getElementById("adminPanel").style.display = "block";
-      caricaSquadre();
-    } else {
-      document.getElementById("adminPanel").style.display = "none";
-    }
-  });
-
-  async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("Accesso effettuato");
-    } catch (err) {
-      alert("Errore login: " + err.message);
-    }
-  }
-
-  async function caricaSquadre() {
-    const tbody = document.querySelector("#tabellaSquadre tbody");
-    tbody.innerHTML = "";
-    const querySnapshot = await getDocs(collection(db, "squadre"));
-    querySnapshot.forEach((doc) => {
-      const s = doc.data();
-      const row = document.createElement("tr");
-      row.innerHTML = `<td>${s.nome}</td><td>${s.punti}</td><td>${s.partite}</td>`;
-      tbody.appendChild(row);
-    });
-  }
-
-  async function aggiungiSquadra() {
-    const nome = prompt("Nome squadra:");
-    if(!nome) return;
-    await addDoc(collection(db, "squadre"), {nome: nome, punti:0, partite:0});
-    caricaSquadre();
-  }
-</script>
+  <meta charset="UTF-8">
+  <title>Campionato Bocce 2ª Categoria</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    #logo { max-width: 200px; margin-top: 20px; }
+    #powered { position: fixed; bottom: 10px; right: 10px; font-size: 0.8em; color: #555; }
+    #adminForm { display: none; margin-top: 20px; }
+    #classifica { margin-top: 30px; }
+    input { margin: 5px; padding: 5px; }
+    button { margin: 5px; padding: 5px 10px; }
+  </style>
 </head>
 <body>
 
-<div class="logo">
-  <img src="logo.png" alt="ASD Bocciofila Marghine Borore" style="height:80px;">
-</div>
+  <img id="logo" src="logo.png" alt="Logo ASD Bocciofila Marghine Borore">
 
-<h2>Campionato Bocce 2ª Categoria</h2>
+  <h1>Campionato Bocce 2ª Categoria</h1>
 
-<!-- Login -->
-<div id="loginPanel">
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Accedi come Admin</button>
-</div>
+  <button id="loginBtn">Accedi come amministratore</button>
 
-<!-- Pannello admin -->
-<div id="adminPanel" style="display:none;">
-  <button onclick="aggiungiSquadra()">Aggiungi squadra</button>
-</div>
+  <div id="adminForm">
+    <h2>Gestione Squadre</h2>
+    <input type="text" id="teamName" placeholder="Nome squadra">
+    <input type="number" id="teamPoints" placeholder="Punti iniziali" min="0">
+    <button id="addTeamBtn">Aggiungi squadra</button>
+  </div>
 
-<table id="tabellaSquadre">
-  <thead>
-    <tr>
-      <th>Squadra</th>
-      <th>Punti</th>
-      <th>Partite</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+  <div id="classifica">
+    <h2>Classifica</h2>
+  </div>
 
-<div style="position:fixed; bottom:10px; right:10px; font-size:12px; color:#555;">
-  Powered by Gianni Casu
-</div>
+  <div id="powered">Powered by Gianni Casu</div>
 
-</body>
-</html>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
+
+    // Config Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCgQZG0pqKXl9k_umgPOTFRlGLXiH04su4",
+      authDomain: "campionatobocce.firebaseapp.com",
+      projectId: "campionatobocce",
+      storageBucket: "campionatobocce.appspot.com",
+      messagingSenderId: "848729533933",
+      appId: "1:848729533933:web:3f66830a54c2accb060be4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const loginBtn = document.getElementById("loginBtn");
+    const adminForm = document.getElementById("adminForm");
+    const addTeamBtn = document.getElementById("addTeamBtn");
+    const classificaDiv = document.getElementById("classifica");
+
+    // Funzione login admin
+    loginBtn.addEventListener("click", async () => {
+      const email = prompt("Email admin:");
+      const password = prompt("Password:");
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Accesso effettuato!");
+        adminForm.style.display = "block";
