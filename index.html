@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -11,8 +12,68 @@
   td { padding: 5px; }
   table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
   .logo { text-align: center; margin-bottom: 15px; }
-  input, select { padding: 5px; margin: 3px; }
+  input { padding: 5px; margin: 3px; }
 </style>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+  // Configura Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyCgQZG0pqKXl9k_umgPOTFRlGLXiH04su4",
+    authDomain: "campionatobocce.firebaseapp.com",
+    projectId: "campionatobocce",
+    storageBucket: "campionatobocce.firebasestorage.app",
+    messagingSenderId: "848729533933",
+    appId: "1:848729533933:web:3f66830a54c2accb060be4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // Controlla login
+  onAuthStateChanged(auth, (user) => {
+    if(user){
+      document.getElementById("adminPanel").style.display = "block";
+      caricaSquadre();
+    } else {
+      document.getElementById("adminPanel").style.display = "none";
+    }
+  });
+
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Accesso effettuato");
+    } catch (err) {
+      alert("Errore login: " + err.message);
+    }
+  }
+
+  async function caricaSquadre() {
+    const tbody = document.querySelector("#tabellaSquadre tbody");
+    tbody.innerHTML = "";
+    const querySnapshot = await getDocs(collection(db, "squadre"));
+    querySnapshot.forEach((doc) => {
+      const s = doc.data();
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${s.nome}</td><td>${s.punti}</td><td>${s.partite}</td>`;
+      tbody.appendChild(row);
+    });
+  }
+
+  async function aggiungiSquadra() {
+    const nome = prompt("Nome squadra:");
+    if(!nome) return;
+    await addDoc(collection(db, "squadre"), {nome: nome, punti:0, partite:0});
+    caricaSquadre();
+  }
+</script>
 </head>
 <body>
 
@@ -20,9 +81,19 @@
   <img src="logo.png" alt="ASD Bocciofila Marghine Borore" style="height:80px;">
 </div>
 
-<h2>Campionato Bocce 2ª Categoria - Squadre</h2>
+<h2>Campionato Bocce 2ª Categoria</h2>
 
-<button onclick="aggiungiSquadra()">Aggiungi squadra</button>
+<!-- Login -->
+<div id="loginPanel">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Accedi come Admin</button>
+</div>
+
+<!-- Pannello admin -->
+<div id="adminPanel" style="display:none;">
+  <button onclick="aggiungiSquadra()">Aggiungi squadra</button>
+</div>
 
 <table id="tabellaSquadre">
   <thead>
@@ -32,33 +103,9 @@
       <th>Partite</th>
     </tr>
   </thead>
-  <tbody>
-    <!-- Squadre appariranno qui -->
-  </tbody>
+  <tbody></tbody>
 </table>
 
-<script>
-let squadre = [];
-
-function aggiornaTabella() {
-  const tbody = document.querySelector("#tabellaSquadre tbody");
-  tbody.innerHTML = "";
-  squadre.forEach((s, i) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${s.nome}</td><td>${s.punti}</td><td>${s.partite}</td>`;
-    tbody.appendChild(row);
-  });
-}
-
-function aggiungiSquadra() {
-  const nome = prompt("Nome squadra:");
-  if(!nome) return;
-  squadre.push({nome: nome, punti: 0, partite: 0});
-  aggiornaTabella();
-}
-</script>
-
-<!-- Powered by in basso a destra -->
 <div style="position:fixed; bottom:10px; right:10px; font-size:12px; color:#555;">
   Powered by Gianni Casu
 </div>
