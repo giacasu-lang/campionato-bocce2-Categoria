@@ -11,6 +11,7 @@
   td { padding: 5px; }
   table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
   .logo { text-align: center; margin-bottom: 15px; }
+  input, select { padding: 5px; margin: 3px; }
 </style>
 </head>
 <body>
@@ -21,8 +22,43 @@
 
 <h2>Campionato Bocce 2ª Categoria - Squadre</h2>
 
-<!-- Qui ci saranno le tue tabelle e pulsanti per le squadre -->
-<p>Inserisci squadre, risultati e classifica qui.</p>
+<!-- Pulsante per aggiungere squadra -->
+<button onclick="aggiungiSquadra()">Aggiungi squadra</button>
+
+<!-- Tabella squadre -->
+<table id="tabellaSquadre">
+  <thead>
+    <tr>
+      <th>Squadra</th>
+      <th>Punti</th>
+      <th>Partite</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Qui appariranno le squadre -->
+  </tbody>
+</table>
+
+<script>
+let squadre = [];
+
+function aggiornaTabella() {
+  const tbody = document.querySelector("#tabellaSquadre tbody");
+  tbody.innerHTML = "";
+  squadre.forEach((s, i) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${s.nome}</td><td>${s.punti}</td><td>${s.partite}</td>`;
+    tbody.appendChild(row);
+  });
+}
+
+function aggiungiSquadra() {
+  const nome = prompt("Nome squadra:");
+  if(!nome) return;
+  squadre.push({nome: nome, punti: 0, partite: 0});
+  aggiornaTabella();
+}
+</script>
 
 </body>
 </html>
