@@ -41,7 +41,7 @@
     import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
 
-    // Config Firebase
+    // Config Firebase (verifica che siano corretti!)
     const firebaseConfig = {
       apiKey: "AIzaSyCgQZG0pqKXl9k_umgPOTFRlGLXiH04su4",
       authDomain: "campionatobocce.firebaseapp.com",
@@ -60,12 +60,56 @@
     const addTeamBtn = document.getElementById("addTeamBtn");
     const classificaDiv = document.getElementById("classifica");
 
-    // Funzione login admin
+    // Funzione login admin con debug
     loginBtn.addEventListener("click", async () => {
+      alert("Hai cliccato login!"); // debug click
       const email = prompt("Email admin:");
       const password = prompt("Password:");
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Accesso effettuato!");
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        alert("Accesso effettuato! UID: " + userCredential.user.uid);
         adminForm.style.display = "block";
+      } catch (error) {
+        alert("Errore login: " + error.code + " - " + error.message);
+      }
+    });
+
+    // Funzione aggiungi squadra
+    addTeamBtn.addEventListener("click", async () => {
+      const nome = document.getElementById("teamName").value.trim();
+      const punti = parseInt(document.getElementById("teamPoints").value) || 0;
+
+      if(nome === "") { alert("Inserisci il nome squadra"); return; }
+
+      try {
+        await addDoc(collection(db, "squadre"), { nome: nome, punti: punti });
+        alert("Squadra aggiunta!");
+        document.getElementById("teamName").value = "";
+        document.getElementById("teamPoints").value = "";
+        caricaClassifica();
+      } catch (error) {
+        alert("Errore aggiunta squadra: " + error.message);
+      }
+    });
+
+    // Carica classifica
+    async function caricaClassifica() {
+      try {
+        const q = query(collection(db, "squadre"), orderBy("punti", "desc"));
+        const snapshot = await getDocs(q);
+        classificaDiv.innerHTML = "<h2>Classifica</h2>";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          classificaDiv.innerHTML += `<p>${data.nome}: ${data.punti} punti</p>`;
+        });
+      } catch (error) {
+        alert("Errore caricamento classifica: " + error.message);
+      }
+    }
+
+    caricaClassifica();
+  </script>
+
+</body>
+</html>
