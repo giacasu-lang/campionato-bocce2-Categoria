@@ -4,7 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Campionato Bocce 2ª Categoria</title>
-  <style>
+  <style><script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("loginBtn");
+    if (!btn) {
+      alert("ERRORE: pulsante login non trovato");
+      return;
+    }
+    btn.addEventListener("click", function () {
+      alert("JS FUNZIONA ✅ clic ricevuto");
+    });
+  });
+</script>
+
+    
     body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
     #logo { max-width: 200px; margin-top: 20px; }
     #powered { position: fixed; bottom: 10px; right: 10px; font-size: 0.8em; color: #555; }
@@ -112,4 +125,5 @@
   </script>
 
 </body>
+
 </html>
