@@ -25,11 +25,20 @@
     <h2>Gestione Squadre</h2>
     <input type="text" id="teamName" placeholder="Nome squadra">
     <input type="number" id="teamPoints" placeholder="Punti iniziali" min="0">
+    <button id="addTeamBtn">Aggiungi squadra</button>
   </div>
 
+  <div id="classifica">
+    <h2>Classifica</h2>
+  </div>
+
+  <div id="powered">Powered by Gianni Casu</div>
+
   <script>
+    // Pulsante funzionante
     document.getElementById("loginBtn").onclick = function() {
       alert("Pulsante funzionante!");
+      document.getElementById("adminForm").style.display = "block";
     };
   </script>
 
