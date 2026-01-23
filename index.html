@@ -62,17 +62,11 @@ const addTeamBtn = document.getElementById("addTeamBtn");
 const classificaDiv = document.getElementById("classifica");
 
 // LOGIN AMMINISTRATORE
-loginBtn.addEventListener("click", async () => {
-  const email = prompt("Email admin:");
-  const password = prompt("Password:");
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    alert("Accesso effettuato!");
-    adminForm.style.display = "block";
-  } catch (error) {
-    alert("Errore login: " + error.message);
-  }
+loginBtn.addEventListener("click", () => {
+  alert("Hai cliccato il pulsante!");
+  adminForm.style.display = "block";
 });
+
 
 // AGGIUNGI SQUADRA
 addTeamBtn.addEventListener("click", async () => {
