@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Campionato Bocce 2ª Categoria</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
 #logo { max-width: 200px; margin-top: 20px; }
@@ -34,12 +35,77 @@ button { margin: 5px; padding: 5px 10px; }
 
 <div id="powered">Powered by Gianni Casu</div>
 
-<!-- SCRIPT SEMPLICE SENZA MODULE -->
-<script>
-document.getElementById("loginBtn").addEventListener("click", function () {
-    alert("OK ✅ JavaScript funziona!");
-    document.getElementById("adminForm").style.display = "block";
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
+
+// CONFIG FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyCgQZG0pqKXl9k_umgPOTFRlGLXiH04su4",
+  authDomain: "campionatobocce.firebaseapp.com",
+  projectId: "campionatobocce",
+  storageBucket: "campionatobocce.appspot.com",
+  messagingSenderId: "848729533933",
+  appId: "1:848729533933:web:3f66830a54c2accb060be4"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ELEMENTI
+const loginBtn = document.getElementById("loginBtn");
+const adminForm = document.getElementById("adminForm");
+const addTeamBtn = document.getElementById("addTeamBtn");
+const classificaDiv = document.getElementById("classifica");
+
+// LOGIN AMMINISTRATORE
+loginBtn.addEventListener("click", async () => {
+  const email = prompt("Email admin:");
+  const password = prompt("Password:");
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    alert("Accesso effettuato!");
+    adminForm.style.display = "block";
+  } catch (error) {
+    alert("Errore login: " + error.message);
+  }
 });
+
+// AGGIUNGI SQUADRA
+addTeamBtn.addEventListener("click", async () => {
+  const nome = document.getElementById("teamName").value.trim();
+  const punti = parseInt(document.getElementById("teamPoints").value) || 0;
+  if(nome === "") { alert("Inserisci il nome squadra"); return; }
+  try {
+    await addDoc(collection(db, "squadre"), { nome: nome, punti: punti });
+    document.getElementById("teamName").value = "";
+    document.getElementById("teamPoints").value = "";
+    caricaClassifica();
+  } catch (error) {
+    alert("Errore aggiunta squadra: " + error.message);
+  }
+});
+
+// CARICA CLASSIFICA
+async function caricaClassifica() {
+  try {
+    const q = query(collection(db, "squadre"), orderBy("punti", "desc"));
+    const snapshot = await getDocs(q);
+    classificaDiv.innerHTML = "<h2>Classifica</h2>";
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      classificaDiv.innerHTML += `<p>${data.nome}: ${data.punti} punti</p>`;
+    });
+  } catch (error) {
+    alert("Errore caricamento classifica: " + error.message);
+  }
+}
+
+// CARICA SUBITO CLASSIFICA
+caricaClassifica();
 </script>
 
 </body>
