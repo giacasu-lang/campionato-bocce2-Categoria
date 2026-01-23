@@ -38,33 +38,4 @@ button { margin: 5px; padding: 5px 10px; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
-
-// Config Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCgQZG0pqKXl9k_umgPOTFRlGLXiH04su4",
-  authDomain: "campionatobocce.firebaseapp.com",
-  projectId: "campionatobocce",
-  storageBucket: "campionatobocce.appspot.com",
-  messagingSenderId: "848729533933",
-  appId: "1:848729533933:web:3f66830a54c2accb060be4"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const loginBtn = document.getElementById("loginBtn");
-const adminForm = document.getElementById("adminForm");
-const addTeamBtn = document.getElementById("addTeamBtn");
-const classificaDiv = document.getElementById("classifica");
-
-// Login admin
-loginBtn.addEventListener("click", async () => {
-  const email = prompt("Email admin:");
-  const password = prompt("Password:");
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    alert("Accesso effettuato!");
-    admin
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebase
