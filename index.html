@@ -1,43 +1,39 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<title>Campionato Bocce 2ª Categoria</title>
-<style>
-body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-#logo { max-width: 200px; margin-top: 20px; }
-#powered { position: fixed; bottom: 10px; right: 10px; font-size: 0.8em; color: #555; }
-#adminForm { display: none; margin-top: 20px; }
-#classifica { margin-top: 30px; }
-input { margin: 5px; padding: 5px; }
-button { margin: 5px; padding: 5px 10px; }
-</style>
+  <meta charset="UTF-8">
+  <title>Campionato Bocce 2ª Categoria</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+    #logo { max-width: 200px; margin-top: 20px; }
+    #powered { position: fixed; bottom: 10px; right: 10px; font-size: 0.8em; color: #555; }
+    #adminForm { display: none; margin-top: 20px; }
+    #classifica { margin-top: 30px; }
+    input { margin: 5px; padding: 5px; }
+    button { margin: 5px; padding: 5px 10px; }
+  </style>
 </head>
-  <script>
-document.getElementById("loginBtn").onclick = function() { alert("Pulsante funzionante!"); };
-</script>
 <body>
 
-<img id="logo" src="logo.png" alt="Logo ASD Bocciofila Marghine Borore">
+  <img id="logo" src="logo.png" alt="Logo ASD Bocciofila Marghine Borore">
 
-<h1>Campionato Bocce 2ª Categoria</h1>
+  <h1>Campionato Bocce 2ª Categoria</h1>
 
-<button id="loginBtn">Accedi come amministratore</button>
+  <button id="loginBtn">Accedi come amministratore</button>
 
-<div id="adminForm">
-<h2>Gestione Squadre</h2>
-<input type="text" id="teamName" placeholder="Nome squadra">
-<input type="number" id="teamPoints" placeholder="Punti iniziali" min="0">
-<button id="addTeamBtn">Aggiungi squadra</button>
-</div>
+  <div id="adminForm">
+    <h2>Gestione Squadre</h2>
+    <input type="text" id="teamName" placeholder="Nome squadra">
+    <input type="number" id="teamPoints" placeholder="Punti iniziali" min="0">
+  </div>
 
-<div id="classifica">
-<h2>Classifica</h2>
-</div>
+  <!-- SCRIPT PER FAR FUNZIONARE IL PULSANTE -->
+  <script>
+    document.getElementById("loginBtn").onclick = function() {
+      alert("Pulsante funzionante!");
+      // più avanti qui metteremo il vero login
+    };
+  </script>
 
-<div id="powered">Powered by Gianni Casu</div>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10
-
+</body>
+</html>
