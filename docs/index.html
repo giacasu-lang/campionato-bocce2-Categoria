@@ -65,7 +65,6 @@
       margin-top: 20px;
     }
 
-    /* Powered by */
     #poweredBy {
       position: fixed;
       bottom: 10px;
@@ -103,14 +102,20 @@
 <div id="poweredBy">Powered by Gianni Casu</div>
 
 <script>
+  const ADMIN_PASSWORD = "Honor70";
+
   document.addEventListener("DOMContentLoaded", function () {
 
     const loginBtn = document.getElementById("loginBtn");
     const adminForm = document.getElementById("adminForm");
 
     loginBtn.addEventListener("click", () => {
-      adminForm.style.display =
-        adminForm.style.display === "block" ? "none" : "block";
+      const pwd = prompt("Inserisci password amministratore:");
+      if (pwd === ADMIN_PASSWORD) {
+        adminForm.style.display = "block";
+      } else {
+        alert("Password errata");
+      }
     });
 
     const teamNameInput = document.getElementById("teamName");
