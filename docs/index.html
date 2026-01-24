@@ -55,4 +55,52 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const loginBtn = document.getElementBy
+    const loginBtn = document.getElementById('loginBtn');
+    const adminForm = document.getElementById('adminForm');
+
+    loginBtn.addEventListener('click', () => {
+      if(adminForm.style.display === 'none' || adminForm.style.display === '') {
+        adminForm.style.display = 'block';
+      } else {
+        adminForm.style.display = 'none';
+      }
+    });
+
+    const addTeamBtn = document.getElementById('addTeamBtn');
+    const teamNameInput = document.getElementById('teamName');
+    const teamPointsInput = document.getElementById('teamPoints');
+    const teamList = document.getElementById('teamList');
+    const teams = [];
+
+    addTeamBtn.addEventListener('click', () => {
+      const name = teamNameInput.value.trim();
+      const points = parseInt(teamPointsInput.value);
+
+      if(name === '' || isNaN(points)) {
+        alert('Inserisci nome squadra e punti validi');
+        return;
+      }
+
+      const team = { name, points };
+      teams.push(team);
+
+      // Ordina le squadre in ordine decrescente di punti
+      teams.sort((a, b) => b.points - a.points);
+
+      // Aggiorna classifica
+      teamList.innerHTML = '';
+      teams.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = `${t.name} - ${t.points} punti`;
+        teamList.appendChild(li);
+      });
+
+      // Pulisce i campi
+      teamNameInput.value = '';
+      teamPointsInput.value = '';
+    });
+  });
+</script>
+
+</body>
+</html>
