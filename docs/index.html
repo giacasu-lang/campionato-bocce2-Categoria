@@ -86,13 +86,18 @@
       box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
-    input {
+    input, textarea {
       margin: 8px 0;
       padding: 10px;
       width: 240px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
+    }
+
+    input[type="file"] {
+      padding: 3px;
+      width: auto;
     }
 
     button#addTeamBtn {
@@ -148,22 +153,29 @@
     }
 
     #classifica li:nth-child(1) {
-      background-color: #ffd700; /* oro */
+      background-color: #ffd700;
       font-weight: bold;
     }
 
     #classifica li:nth-child(2) {
-      background-color: #c0c0c0; /* argento */
+      background-color: #c0c0c0;
       font-weight: bold;
     }
 
     #classifica li:nth-child(3) {
-      background-color: #cd7f32; /* bronzo */
+      background-color: #cd7f32;
       font-weight: bold;
     }
 
     #classifica li:nth-child(even):not(:nth-child(-n+3)) {
-      background-color: #f0f7fa; /* righe alternate chiaro */
+      background-color: #f0f7fa;
+    }
+
+    .team-photo {
+      max-width: 100px;
+      display: block;
+      margin-top: 6px;
+      border-radius: 6px;
     }
 
     #poweredBy {
@@ -196,7 +208,9 @@
   <h2>Gestione Squadre</h2>
 
   <input type="text" id="teamName" placeholder="Nome squadra">
+  <input type="text" id="teamMembers" placeholder="Componenti separati da virgola">
   <input type="number" id="teamPoints" placeholder="Punti" min="0">
+  <input type="file" id="teamPhoto" accept="image/*">
   <br>
   <button id="addTeamBtn">Aggiungi squadra</button>
 
@@ -217,7 +231,9 @@
     const sectionButtons = document.querySelectorAll(".sectionBtns button");
 
     const teamNameInput = document.getElementById("teamName");
+    const teamMembersInput = document.getElementById("teamMembers");
     const teamPointsInput = document.getElementById("teamPoints");
+    const teamPhotoInput = document.getElementById("teamPhoto");
     const addTeamBtn = document.getElementById("addTeamBtn");
     const teamList = document.getElementById("teamList");
 
@@ -225,14 +241,14 @@
 
     let teamsData = {
       categoria: [
-        { name: "Marghine Borore", points: 0 },
-        { name: "Marghine Borore BLU", points: 0 }
+        { name: "Marghine Borore", points: 0, members: "", photo: "" },
+        { name: "Marghine Borore BLU", points: 0, members: "", photo: "" }
       ],
       juniores: [
-        { name: "Marghine Juniores", points: 0 }
+        { name: "Marghine Juniores", points: 0, members: "", photo: "" }
       ],
       femminile: [
-        { name: "Marghine Femminile", points: 0 }
+        { name: "Marghine Femminile", points: 0, members: "", photo: "" }
       ]
     };
 
@@ -245,7 +261,14 @@
       teamList.innerHTML = "";
       teams.forEach(t => {
         const li = document.createElement("li");
-        li.textContent = `${t.name} - ${t.points} punti`;
+        li.innerHTML = `<strong>${t.name}</strong> - ${t.points} punti<br>
+                        <em>${t.members}</em>`;
+        if (t.photo) {
+          const img = document.createElement("img");
+          img.src = t.photo;
+          img.className = "team-photo";
+          li.appendChild(img);
+        }
         teamList.appendChild(li);
       });
       localStorage.setItem("teamsData", JSON.stringify(teamsData));
@@ -269,6 +292,7 @@
 
     addTeamBtn.addEventListener("click", () => {
       const name = teamNameInput.value.trim();
+      const members = teamMembersInput.value.trim();
       const points = parseInt(teamPointsInput.value);
 
       if (!name || isNaN(points)) {
@@ -276,11 +300,24 @@
         return;
       }
 
-      teamsData[currentSection].push({ name, points });
-      renderTeams();
+      // Gestione foto
+      const file = teamPhotoInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          teamsData[currentSection].push({ name, points, members, photo: e.target.result });
+          renderTeams();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        teamsData[currentSection].push({ name, points, members, photo: "" });
+        renderTeams();
+      }
 
       teamNameInput.value = "";
+      teamMembersInput.value = "";
       teamPointsInput.value = "";
+      teamPhotoInput.value = "";
     });
 
     renderTeams();
