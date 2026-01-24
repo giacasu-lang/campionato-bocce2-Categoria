@@ -5,13 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campionato Bocce 2ª Categoria</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
-    header { display: flex; align-items: center; margin-bottom: 20px; }
+    body { font-family: Arial, sans-serif; background-color: #f0f0f0; margin: 0; padding: 20px; }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start; /* Logo a sinistra, titolo a destra */
+      background-color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
     header img { height: 80px; margin-right: 20px; }
-    h1 { margin: 0; }
-    #adminForm { display: none; background: #fff; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    header h1 { margin: 0; font-size: 24px; color: #333; }
+    #loginBtn { padding: 8px 12px; margin-top: 10px; cursor: pointer; }
+    #adminForm {
+      display: none;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
     input { margin: 5px 0; padding: 5px; width: 200px; }
-    button { padding: 5px 10px; margin-top: 10px; }
+    button { padding: 5px 10px; margin-top: 10px; cursor: pointer; }
     #classifica { margin-top: 20px; }
   </style>
 </head>
@@ -38,20 +55,51 @@
 
 <script>
   // Mostra/Nascondi pannello amministratore
-  const loginBtn = document.getElementById('loginBtn');
-  const adminForm = document.getElementById('adminForm');
-  loginBtn.addEventListener('click', () => {
-    adminForm.style.display = adminForm.style.display === 'none' ? 'block' : 'none';
+  document.addEventListener("DOMContentLoaded", function() {
+    const loginBtn = document.getElementById('loginBtn');
+    const adminForm = document.getElementById('adminForm');
+
+    loginBtn.addEventListener('click', () => {
+      if(adminForm.style.display === 'none' || adminForm.style.display === '') {
+        adminForm.style.display = 'block';
+      } else {
+        adminForm.style.display = 'none';
+      }
+    });
+
+    // Gestione squadre
+    const addTeamBtn = document.getElementById('addTeamBtn');
+    const teamNameInput = document.getElementById('teamName');
+    const teamPointsInput = document.getElementById('teamPoints');
+    const teamList = document.getElementById('teamList');
+    const teams = [];
+
+    addTeamBtn.addEventListener('click', () => {
+      const name = teamNameInput.value.trim();
+      const points = parseInt(teamPointsInput.value);
+
+      if(name === '' || isNaN(points)) {
+        alert('Inserisci nome squadra e punti validi');
+        return;
+      }
+
+      const team = { name, points };
+      teams.push(team);
+
+      // Aggiorna classifica
+      teamList.innerHTML = '';
+      teams.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = `${t.name} - ${t.points} punti`;
+        teamList.appendChild(li);
+      });
+
+      // Pulisce i campi
+      teamNameInput.value = '';
+      teamPointsInput.value = '';
+    });
   });
+</script>
 
-  // Gestione squadre
-  const addTeamBtn = document.getElementById('addTeamBtn');
-  const teamNameInput = document.getElementById('teamName');
-  const teamPointsInput = document.getElementById('teamPoints');
-  const teamList = document.getElementById('teamList');
-
-  const teams = [];
-
-  addTeamBtn.addEventListener('click', () => {
-    const name = teamNameInput.value.trim();
-    const points = parseInt
+</body>
+</html>
