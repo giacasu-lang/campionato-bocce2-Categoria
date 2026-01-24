@@ -4,34 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campionato Bocce 2ª Categoria</title>
+
   <style>
-    body { font-family: Arial, sans-serif; background-color: #f0f0f0; margin: 0; padding: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+
     header {
       display: flex;
       align-items: center;
-      justify-content: flex-start; /* Logo a sinistra, titolo a destra */
       background-color: #ffffff;
       padding: 10px 20px;
       border-radius: 8px;
       margin-bottom: 20px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    header img { height: 80px; margin-right: 20px; }
-    header h1 { margin: 0; font-size: 24px; color: #333; }
-    #loginBtn { padding: 8px 12px; margin-top: 10px; cursor: pointer; }
+
+    header img {
+      height: 80px;
+      margin-right: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    #loginBtn {
+      padding: 8px 12px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
     #adminForm {
       display: none;
-      background: #fff;
+      background: #ffffff;
       padding: 20px;
       border-radius: 8px;
       margin-top: 20px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    input { margin: 5px 0; padding: 5px; width: 200px; }
-    button { padding: 5px 10px; margin-top: 10px; cursor: pointer; }
-    #classifica { margin-top: 20px; }
+
+    input {
+      margin: 5px 0;
+      padding: 5px;
+      width: 200px;
+    }
+
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #classifica {
+      margin-top: 20px;
+    }
+
+    /* Powered by */
+    #poweredBy {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 12px;
+      color: #777;
+      opacity: 0.7;
+    }
   </style>
 </head>
+
 <body>
 
 <header>
@@ -43,8 +88,10 @@
 
 <div id="adminForm">
   <h2>Gestione Squadre</h2>
+
   <input type="text" id="teamName" placeholder="Nome squadra">
-  <input type="number" id="teamPoints" placeholder="Punti iniziali" min="0">
+  <input type="number" id="teamPoints" placeholder="Punti" min="0">
+  <br>
   <button id="addTeamBtn">Aggiungi squadra</button>
 
   <div id="classifica">
@@ -53,51 +100,54 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const loginBtn = document.getElementById('loginBtn');
-    const adminForm = document.getElementById('adminForm');
+<div id="poweredBy">Powered by Gianni Casu</div>
 
-    loginBtn.addEventListener('click', () => {
-      adminForm.style.display = (adminForm.style.display === 'block') ? 'none' : 'block';
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const loginBtn = document.getElementById("loginBtn");
+    const adminForm = document.getElementById("adminForm");
+
+    loginBtn.addEventListener("click", () => {
+      adminForm.style.display =
+        adminForm.style.display === "block" ? "none" : "block";
     });
 
-    const addTeamBtn = document.getElementById('addTeamBtn');
-    const teamNameInput = document.getElementById('teamName');
-    const teamPointsInput = document.getElementById('teamPoints');
-    const teamList = document.getElementById('teamList');
+    const teamNameInput = document.getElementById("teamName");
+    const teamPointsInput = document.getElementById("teamPoints");
+    const addTeamBtn = document.getElementById("addTeamBtn");
+    const teamList = document.getElementById("teamList");
 
-    // Carica squadre salvate
-    let teams = JSON.parse(localStorage.getItem('teams')) || [];
+    let teams = JSON.parse(localStorage.getItem("teams")) || [];
 
     function renderTeams() {
-      teams.sort((a,b) => b.points - a.points); // ordina per punti decrescenti
-      teamList.innerHTML = '';
+      teams.sort((a, b) => b.points - a.points);
+      teamList.innerHTML = "";
       teams.forEach(t => {
-        const li = document.createElement('li');
+        const li = document.createElement("li");
         li.textContent = `${t.name} - ${t.points} punti`;
         teamList.appendChild(li);
       });
-      localStorage.setItem('teams', JSON.stringify(teams)); // salva
+      localStorage.setItem("teams", JSON.stringify(teams));
     }
 
-    addTeamBtn.addEventListener('click', () => {
+    addTeamBtn.addEventListener("click", () => {
       const name = teamNameInput.value.trim();
       const points = parseInt(teamPointsInput.value);
 
-      if(name === '' || isNaN(points)) {
-        alert('Inserisci nome squadra e punti validi');
+      if (!name || isNaN(points)) {
+        alert("Inserisci nome squadra e punti validi");
         return;
       }
 
       teams.push({ name, points });
       renderTeams();
 
-      teamNameInput.value = '';
-      teamPointsInput.value = '';
+      teamNameInput.value = "";
+      teamPointsInput.value = "";
     });
 
-    renderTeams(); // mostra subito le squadre salvate
+    renderTeams();
   });
 </script>
 
