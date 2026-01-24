@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campionato Bocce 2°/3° Categoria, Campionato Juniores e Campionato Femminile</title>
 
-  <!-- Font moderno -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
@@ -54,6 +53,26 @@
       background-color: #01579b;
     }
 
+    .sectionBtns {
+      margin-top: 15px;
+    }
+
+    .sectionBtns button {
+      padding: 8px 14px;
+      margin-right: 8px;
+      cursor: pointer;
+      background-color: #0288d1;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .sectionBtns button:hover {
+      background-color: #01579b;
+    }
+
     #adminForm {
       display: none;
       background-color: #f1f8e9;
@@ -71,7 +90,7 @@
       border-radius: 4px;
     }
 
-    button {
+    button#addTeamBtn {
       padding: 8px 14px;
       cursor: pointer;
       margin-top: 10px;
@@ -83,7 +102,7 @@
       transition: background-color 0.3s;
     }
 
-    button:hover {
+    button#addTeamBtn:hover {
       background-color: #2e7d32;
     }
 
@@ -119,6 +138,12 @@
 
 <button id="loginBtn">Accedi come amministratore</button>
 
+<div class="sectionBtns">
+  <button data-section="categoria">2°/3° Categoria</button>
+  <button data-section="juniores">Juniores</button>
+  <button data-section="femminile">Femminile</button>
+</div>
+
 <div id="adminForm">
   <h2>Gestione Squadre</h2>
 
@@ -141,7 +166,54 @@
   document.addEventListener("DOMContentLoaded", function () {
     const loginBtn = document.getElementById("loginBtn");
     const adminForm = document.getElementById("adminForm");
+    const sectionButtons = document.querySelectorAll(".sectionBtns button");
 
+    const teamNameInput = document.getElementById("teamName");
+    const teamPointsInput = document.getElementById("teamPoints");
+    const addTeamBtn = document.getElementById("addTeamBtn");
+    const teamList = document.getElementById("teamList");
+
+    let currentSection = "categoria";
+
+    // Squadre iniziali
+    let teamsData = {
+      categoria: [
+        { name: "Marghine Borore", points: 0 },
+        { name: "Marghine Borore BLU", points: 0 }
+      ],
+      juniores: [
+        { name: "Marghine Juniores", points: 0 }
+      ],
+      femminile: [
+        { name: "Marghine Femminile", points: 0 }
+      ]
+    };
+
+    // Carica da localStorage se presente
+    const savedData = JSON.parse(localStorage.getItem("teamsData"));
+    if (savedData) teamsData = savedData;
+
+    function renderTeams() {
+      const teams = teamsData[currentSection];
+      teams.sort((a,b) => b.points - a.points);
+      teamList.innerHTML = "";
+      teams.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = `${t.name} - ${t.points} punti`;
+        teamList.appendChild(li);
+      });
+      localStorage.setItem("teamsData", JSON.stringify(teamsData));
+    }
+
+    // Selezione sezione
+    sectionButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentSection = btn.dataset.section;
+        renderTeams();
+      });
+    });
+
+    // Accesso amministratore
     loginBtn.addEventListener("click", () => {
       const pwd = prompt("Inserisci password amministratore:");
       if (pwd === ADMIN_PASSWORD) {
@@ -151,24 +223,7 @@
       }
     });
 
-    const teamNameInput = document.getElementById("teamName");
-    const teamPointsInput = document.getElementById("teamPoints");
-    const addTeamBtn = document.getElementById("addTeamBtn");
-    const teamList = document.getElementById("teamList");
-
-    let teams = JSON.parse(localStorage.getItem("teams")) || [];
-
-    function renderTeams() {
-      teams.sort((a, b) => b.points - a.points);
-      teamList.innerHTML = "";
-      teams.forEach(t => {
-        const li = document.createElement("li");
-        li.textContent = `${t.name} - ${t.points} punti`;
-        teamList.appendChild(li);
-      });
-      localStorage.setItem("teams", JSON.stringify(teams));
-    }
-
+    // Aggiungi squadra
     addTeamBtn.addEventListener("click", () => {
       const name = teamNameInput.value.trim();
       const points = parseInt(teamPointsInput.value);
@@ -178,7 +233,7 @@
         return;
       }
 
-      teams.push({ name, points });
+      teamsData[currentSection].push({ name, points });
       renderTeams();
 
       teamNameInput.value = "";
