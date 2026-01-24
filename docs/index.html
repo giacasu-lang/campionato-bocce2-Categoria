@@ -37,24 +37,6 @@
       color: #0277bd;
     }
 
-    #loginBtn {
-      padding: 12px 20px;
-      cursor: pointer;
-      margin-top: 10px;
-      background: linear-gradient(to right, #0288d1, #0277bd);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: transform 0.2s, background 0.3s;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    }
-
-    #loginBtn:hover {
-      transform: scale(1.05);
-      background: linear-gradient(to right, #0277bd, #01579b);
-    }
-
     .sectionBtns {
       margin-top: 15px;
     }
@@ -75,47 +57,6 @@
     .sectionBtns button:hover {
       transform: scale(1.05);
       background: linear-gradient(to right, #0288d1, #01579b);
-    }
-
-    #adminForm {
-      display: none;
-      background-color: #f1f8e9;
-      padding: 30px;
-      border-radius: 12px;
-      margin-top: 20px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-
-    input, textarea {
-      margin: 8px 0;
-      padding: 10px;
-      width: 240px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    input[type="file"] {
-      padding: 3px;
-      width: auto;
-    }
-
-    button {
-      padding: 10px 18px;
-      cursor: pointer;
-      margin-top: 12px;
-      background: linear-gradient(to right, #66bb6a, #43a047);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: transform 0.2s, background 0.3s;
-      box-shadow: 0 3px 5px rgba(0,0,0,0.1);
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(to right, #43a047, #2e7d32);
     }
 
     #classifica {
@@ -203,198 +144,124 @@
   <h1>Campionato Bocce 2°/3° Categoria, Campionato Juniores e Campionato Femminile</h1>
 </header>
 
-<button id="loginBtn">Accedi come amministratore</button>
-
 <div class="sectionBtns">
   <button data-section="categoria">2°/3° Categoria</button>
   <button data-section="juniores">Juniores</button>
   <button data-section="femminile">Femminile</button>
 </div>
 
-<div id="adminForm">
-  <h2>Gestione Squadre</h2>
-
-  <input type="text" id="teamName" placeholder="Nome squadra">
-  <input type="text" id="teamMembers" placeholder="Componenti separati da virgola">
-  <input type="number" id="teamPoints" placeholder="Punti" min="0">
-  <input type="file" id="teamPhoto" accept="image/*">
-  <br>
-  <button id="addTeamBtn">Aggiungi squadra</button>
-
-  <h3>Aggiungi partita</h3>
-  <input type="text" id="matchTeam" placeholder="Nome squadra">
-  <input type="date" id="matchDate">
-  <input type="text" id="matchOpponent" placeholder="Avversario">
-  <input type="text" id="matchLocation" placeholder="Campo">
-  <button id="addMatchBtn">Aggiungi gara</button>
-
-  <div id="classifica">
-    <h2>Classifica</h2>
-    <ul id="teamList"></ul>
-  </div>
+<div id="classifica">
+  <h2>Classifica</h2>
+  <ul id="teamList"></ul>
 </div>
 
 <div id="poweredBy">Powered by Gianni Casu</div>
 
 <script>
-  const ADMIN_PASSWORD = "Honor70";
+  // Dati pubblici delle squadre e calendario
+  const teamsData = {
+    categoria: [
+      {
+        name: "Marghine Borore",
+        points: 0,
+        members: "Gianni Casu, Luca Piras, Marco Sanna",
+        photo: "marghine_borore.png",
+        matches: [
+          { date: "2026-02-10", opponent: "Avversario A", location: "Campo 1" },
+          { date: "2026-02-17", opponent: "Avversario B", location: "Campo 2" }
+        ]
+      },
+      {
+        name: "Marghine Borore BLU",
+        points: 0,
+        members: "Andrea Melis, Paolo Cocco, Fabio Serra",
+        photo: "marghine_borore_blu.png",
+        matches: [
+          { date: "2026-02-12", opponent: "Avversario C", location: "Campo 1" }
+        ]
+      }
+    ],
+    juniores: [
+      {
+        name: "Marghine Juniores",
+        points: 0,
+        members: "Alessio Lai, Matteo Pinna",
+        photo: "marghine_juniores.png",
+        matches: [
+          { date: "2026-02-11", opponent: "Avversario D", location: "Campo 3" }
+        ]
+      }
+    ],
+    femminile: [
+      {
+        name: "Marghine Femminile",
+        points: 0,
+        members: "Sara Mura, Elena Meloni",
+        photo: "marghine_femminile.png",
+        matches: [
+          { date: "2026-02-15", opponent: "Avversario E", location: "Campo 4" }
+        ]
+      }
+    ]
+  };
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const loginBtn = document.getElementById("loginBtn");
-    const adminForm = document.getElementById("adminForm");
-    const sectionButtons = document.querySelectorAll(".sectionBtns button");
+  let currentSection = "categoria";
 
-    const teamNameInput = document.getElementById("teamName");
-    const teamMembersInput = document.getElementById("teamMembers");
-    const teamPointsInput = document.getElementById("teamPoints");
-    const teamPhotoInput = document.getElementById("teamPhoto");
-    const addTeamBtn = document.getElementById("addTeamBtn");
+  const sectionButtons = document.querySelectorAll(".sectionBtns button");
+  const teamList = document.getElementById("teamList");
 
-    const matchTeamInput = document.getElementById("matchTeam");
-    const matchDateInput = document.getElementById("matchDate");
-    const matchOpponentInput = document.getElementById("matchOpponent");
-    const matchLocationInput = document.getElementById("matchLocation");
-    const addMatchBtn = document.getElementById("addMatchBtn");
+  function renderTeams() {
+    const teams = teamsData[currentSection];
+    teamList.innerHTML = "";
+    teams.forEach(t => {
+      const sortedMembers = t.members.split(',').map(m => m.trim()).sort().join(', ');
 
-    const teamList = document.getElementById("teamList");
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${t.name}</strong> - ${t.points} punti<br>
+                      <em>${sortedMembers}</em>`;
+      if (t.photo) {
+        const img = document.createElement("img");
+        img.src = t.photo;
+        img.className = "team-photo";
+        li.appendChild(img);
+      }
 
-    let currentSection = "categoria";
+      // Pulsante per calendario gare
+      const matchBtn = document.createElement("button");
+      matchBtn.textContent = "Mostra calendario";
+      matchBtn.style.marginTop = "6px";
+      li.appendChild(matchBtn);
 
-    let teamsData = {
-      categoria: [
-        { name: "Marghine Borore", points: 0, members: "", photo: "", matches: [] },
-        { name: "Marghine Borore BLU", points: 0, members: "", photo: "", matches: [] }
-      ],
-      juniores: [
-        { name: "Marghine Juniores", points: 0, members: "", photo: "", matches: [] }
-      ],
-      femminile: [
-        { name: "Marghine Femminile", points: 0, members: "", photo: "", matches: [] }
-      ]
-    };
+      const matchList = document.createElement("div");
+      matchList.className = "match-list";
+      li.appendChild(matchList);
 
-    const savedData = JSON.parse(localStorage.getItem("teamsData"));
-    if (savedData) teamsData = savedData;
-
-    function renderTeams() {
-      const teams = teamsData[currentSection];
-      teams.sort((a,b) => b.points - a.points);
-      teamList.innerHTML = "";
-      teams.forEach(t => {
-        const sortedMembers = t.members.split(',').map(m => m.trim()).sort().join(', ');
-
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${t.name}</strong> - ${t.points} punti<br>
-                        <em>${sortedMembers}</em>`;
-        if (t.photo) {
-          const img = document.createElement("img");
-          img.src = t.photo;
-          img.className = "team-photo";
-          li.appendChild(img);
+      matchBtn.addEventListener("click", () => {
+        matchList.innerHTML = "";
+        if (t.matches.length === 0) {
+          matchList.textContent = "Nessuna gara inserita";
+        } else {
+          const sortedMatches = t.matches.sort((a,b) => new Date(a.date) - new Date(b.date));
+          sortedMatches.forEach(m => {
+            const mDiv = document.createElement("div");
+            mDiv.textContent = `${m.date} - ${m.opponent} - ${m.location}`;
+            matchList.appendChild(mDiv);
+          });
         }
-
-        // Pulsante per calendario gare
-        const matchBtn = document.createElement("button");
-        matchBtn.textContent = "Mostra calendario";
-        matchBtn.style.marginTop = "6px";
-        li.appendChild(matchBtn);
-
-        const matchList = document.createElement("div");
-        matchList.className = "match-list";
-        li.appendChild(matchList);
-
-        matchBtn.addEventListener("click", () => {
-          matchList.innerHTML = "";
-          if (t.matches.length === 0) {
-            matchList.textContent = "Nessuna gara inserita";
-          } else {
-            const sortedMatches = t.matches.sort((a,b) => new Date(a.date) - new Date(b.date));
-            sortedMatches.forEach(m => {
-              const mDiv = document.createElement("div");
-              mDiv.textContent = `${m.date} - ${m.opponent} - ${m.location}`;
-              matchList.appendChild(mDiv);
-            });
-          }
-        });
-
-        teamList.appendChild(li);
       });
-      localStorage.setItem("teamsData", JSON.stringify(teamsData));
-    }
 
-    sectionButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        currentSection = btn.dataset.section;
-        renderTeams();
-      });
+      teamList.appendChild(li);
     });
+  }
 
-    loginBtn.addEventListener("click", () => {
-      const pwd = prompt("Inserisci password amministratore:");
-      if (pwd === ADMIN_PASSWORD) {
-        adminForm.style.display = "block";
-      } else {
-        alert("Password errata");
-      }
-    });
-
-    addTeamBtn.addEventListener("click", () => {
-      const name = teamNameInput.value.trim();
-      const members = teamMembersInput.value.trim();
-      const points = parseInt(teamPointsInput.value);
-
-      if (!name || isNaN(points)) {
-        alert("Inserisci nome squadra e punti validi");
-        return;
-      }
-
-      const file = teamPhotoInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          teamsData[currentSection].push({ name, points, members, photo: e.target.result, matches: [] });
-          renderTeams();
-        };
-        reader.readAsDataURL(file);
-      } else {
-        teamsData[currentSection].push({ name, points, members, photo: "", matches: [] });
-        renderTeams();
-      }
-
-      teamNameInput.value = "";
-      teamMembersInput.value = "";
-      teamPointsInput.value = "";
-      teamPhotoInput.value = "";
-    });
-
-    addMatchBtn.addEventListener("click", () => {
-      const name = matchTeamInput.value.trim();
-      const date = matchDateInput.value;
-      const opponent = matchOpponentInput.value.trim();
-      const location = matchLocationInput.value.trim();
-
-      if (!name || !date || !opponent || !location) {
-        alert("Compila tutti i campi della gara");
-        return;
-      }
-
-      const team = teamsData[currentSection].find(t => t.name === name);
-      if (!team) {
-        alert("Squadra non trovata nella sezione corrente");
-        return;
-      }
-
-      team.matches.push({ date, opponent, location });
+  sectionButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentSection = btn.dataset.section;
       renderTeams();
-
-      matchTeamInput.value = "";
-      matchDateInput.value = "";
-      matchOpponentInput.value = "";
-      matchLocationInput.value = "";
     });
-
-    renderTeams();
   });
+
+  renderTeams();
 </script>
 
 </body>
