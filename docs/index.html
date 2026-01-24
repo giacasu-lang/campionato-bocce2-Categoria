@@ -260,9 +260,12 @@
       teams.sort((a,b) => b.points - a.points);
       teamList.innerHTML = "";
       teams.forEach(t => {
+        // Ordina i componenti alfabeticamente
+        const sortedMembers = t.members.split(',').map(m => m.trim()).sort().join(', ');
+
         const li = document.createElement("li");
         li.innerHTML = `<strong>${t.name}</strong> - ${t.points} punti<br>
-                        <em>${t.members}</em>`;
+                        <em>${sortedMembers}</em>`;
         if (t.photo) {
           const img = document.createElement("img");
           img.src = t.photo;
@@ -300,7 +303,6 @@
         return;
       }
 
-      // Gestione foto
       const file = teamPhotoInput.files[0];
       if (file) {
         const reader = new FileReader();
