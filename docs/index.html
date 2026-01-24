@@ -112,10 +112,40 @@
 
     #classifica h2 {
       color: #0277bd;
+      font-size: 22px;
+      margin-bottom: 10px;
     }
 
     #classifica ul {
-      padding-left: 20px;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    #classifica li {
+      padding: 8px 12px;
+      margin-bottom: 5px;
+      border-radius: 6px;
+      background-color: #e0f7fa;
+      font-weight: 500;
+    }
+
+    #classifica li:nth-child(1) {
+      background-color: #ffd700; /* oro */
+      font-weight: bold;
+    }
+
+    #classifica li:nth-child(2) {
+      background-color: #c0c0c0; /* argento */
+      font-weight: bold;
+    }
+
+    #classifica li:nth-child(3) {
+      background-color: #cd7f32; /* bronzo */
+      font-weight: bold;
+    }
+
+    #classifica li:nth-child(even):not(:nth-child(-n+3)) {
+      background-color: #f0f7fa; /* righe alternate chiaro */
     }
 
     #poweredBy {
