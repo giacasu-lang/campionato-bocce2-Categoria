@@ -2,53 +2,56 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Campionato Bocce 2ª Categoria</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>Campionato Bocce 2ª Categoria</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-
-    #logo {
-      max-width: 200px;
-      margin-top: 20px;
-    }
-
-    h1 {
-      margin-top: 20px;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    #powered {
-      margin-top: 40px;
-      font-size: 12px;
-      color: #666;
-    }
+    body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+    header { display: flex; align-items: center; margin-bottom: 20px; }
+    header img { height: 80px; margin-right: 20px; }
+    h1 { margin: 0; }
+    #adminForm { display: none; background: #fff; padding: 20px; border-radius: 8px; margin-top: 20px; }
+    input { margin: 5px 0; padding: 5px; width: 200px; }
+    button { padding: 5px 10px; margin-top: 10px; }
+    #classifica { margin-top: 20px; }
   </style>
 </head>
-
 <body>
 
-  <img id="logo" src="logo.png" alt="Logo ASD Bocciofila Marghine Borore">
-
+<header>
+  <img src="logo.png" alt="Logo ASD Bocciofila Marghine Borore">
   <h1>Campionato Bocce 2ª Categoria</h1>
+</header>
 
-  <button onclick="alert('Area amministratore (demo)')">
-    Accedi come amministratore
-  </button>
+<button id="loginBtn">Accedi come amministratore</button>
 
-  <div id="powered">Powered by Gianni Casu</div>
+<div id="adminForm">
+  <h2>Gestione Squadre</h2>
+  <input type="text" id="teamName" placeholder="Nome squadra">
+  <input type="number" id="teamPoints" placeholder="Punti iniziali" min="0">
+  <button id="addTeamBtn">Aggiungi squadra</button>
 
-</body>
-</html>
+  <div id="classifica">
+    <h2>Classifica</h2>
+    <ul id="teamList"></ul>
+  </div>
+</div>
+
+<script>
+  // Mostra/Nascondi pannello amministratore
+  const loginBtn = document.getElementById('loginBtn');
+  const adminForm = document.getElementById('adminForm');
+  loginBtn.addEventListener('click', () => {
+    adminForm.style.display = adminForm.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Gestione squadre
+  const addTeamBtn = document.getElementById('addTeamBtn');
+  const teamNameInput = document.getElementById('teamName');
+  const teamPointsInput = document.getElementById('teamPoints');
+  const teamList = document.getElementById('teamList');
+
+  const teams = [];
+
+  addTeamBtn.addEventListener('click', () => {
+    const name = teamNameInput.value.trim();
+    const points = parseInt
