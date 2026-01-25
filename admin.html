@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Campionato Bocce</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background: #f0f4f8; }
+h1 { text-align: center; color: #0277bd; }
+form { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);}
+input, select, textarea, button { width: 100%; padding: 8px; margin: 5px 0; border-radius: 6px; border: 1px solid #ccc; }
+button { background: #0288d1; color: #fff; border: none; cursor: pointer; font-weight: bold; }
+button:hover { background: #026fa1; }
+.hidden { display: none; }
+#status { margin-top: 10px; font-weight: bold; color: green; }
+</style>
+</head>
+<body>
+
+<h1>Admin Campionato Bocce</h1>
+
+<!-- Login -->
+<div id="loginDiv">
+  <form id="loginForm">
+    <label>Username:</label>
+    <input type="text" id="username" required>
+    <label>Password:</label>
+    <input type="password" id="password" required>
+    <button type="submit">Accedi</button>
+  </form>
+</div>
+
+<!-- Admin Panel -->
+<div id="adminPanel" class="hidden">
+
+  <h2>Aggiungi/Modifica Squadre</h2>
+  <form id="teamForm">
+    <label>Categoria:</label>
+    <select id="teamCategory">
+      <option value="categoria">2°/3° Categoria</option>
+      <option value="juniores">Juniores</option>
+      <option value="femminile">Femminile</option>
+    </select>
+    <label>Nome squadra:</label>
+    <input type="text" id="teamName" required>
+    <label>Componenti (separati da virgola):</label>
+    <input type="text" id="teamMembers" required>
+    <label>Foto (nome file):</label>
+    <input type="text" id="teamPhoto" required>
+    <button type="submit">Salva squadra</button>
+  </form>
+
+  <h2>Aggiungi calendario gare</h2>
+  <form id="matchForm">
+    <label>Categoria:</label>
+    <select id="matchCategory">
+      <option value="categoria">2°/3° Categoria</option>
+      <option value="juniores">Juniores</option>
+      <option value="femminile">Femminile</option>
+    </select>
+    <label>Nome squadra:</label>
+    <input type="text" id="matchTeam" required>
+    <label>Data (AAAA-MM-GG):</label>
+    <input type="date" id="matchDate" required>
+    <label>Avversario:</label>
+    <input type="text" id="matchOpponent" required>
+    <label>Luogo:</label>
+    <input type="text" id="matchLocation" required>
+    <button type="submit">Aggiungi gara</button>
+  </form>
+
+  <div id="status"></div>
+</div>
+
+<script>
+// === Configurazione login ===
+const ADMIN_USER = "gianni";
+const ADMIN_PASS = "1234";
+
+// === Login ===
+const loginDiv = document.getElementById("loginDiv");
+const adminPanel = document.getElementById("adminPanel");
+document.getElementById("loginForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const u = document.getElementById("username").value;
+  const p = document.getElementById("password").value;
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    loginDiv.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+  } else {
+    alert("Username o password errati");
+  }
+});
+
+// === Funzioni salvataggio dati ===
+function getTeamsData(){
+  const data = localStorage.getItem("teamsData");
+  return data ? JSON.parse(data) : { categoria: [], juniores: [], femminile: [] };
+}
+
+function saveTeamsData(data){
+  localStorage.setItem("teamsData", JSON.stringify(data));
+  document.getElementById("status").textContent = "Dati salvati correttamente!";
+  setTimeout(()=>document.getElementById("status").textContent="", 3000);
+}
+
+// === Salva squadra ===
+document.getElementById("teamForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const category = document.getElementById("teamCategory").value;
+  const name = document.getElementById("teamName").value.trim();
+  const members = document.getElementById("teamMembers").value.trim();
+  const photo = document.getElementById("teamPhoto").value.trim();
+
+  const data = getTeamsData();
+
+  // Controlla se la squadra esiste già
+  const existingIndex = data[category].findIndex(t => t.name === name);
+  const teamObj = { name, points: 0, members, photo, matches: existingIndex>=0 ? data[category][existingIndex].matches : [] };
+
+  if(existingIndex>=0){
+    data[category][existingIndex] = teamObj;
+  } else {
+    data[category].push(teamObj);
+  }
+
+  saveTeamsData(data);
+  this.reset();
+});
+
+// === Salva gara ===
+document.getElementById("matchForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const category = document.getElementById("matchCategory").value;
+  const teamName = document.getElementById("matchTeam").value.trim();
+  const date = document.getElementById("matchDate").value;
+  const opponent = document.getElementById("matchOpponent").value.trim();
+  const location = document.getElementById("matchLocation").value.trim();
+
+  const data = getTeamsData();
+  const team = data[category].find(t => t.name === teamName);
+  if(!team){
+    alert("Squadra non trovata. Inseriscila prima!");
+    return;
+  }
+  team.matches.push({ date, opponent, location });
+  saveTeamsData(data);
+  this.reset();
+});
+</script>
+
+</body>
+</html>
