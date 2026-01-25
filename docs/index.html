@@ -14,6 +14,7 @@ body {
   padding: 20px;
   background: linear-gradient(to bottom, #e0f7fa, #ffffff);
   color: #333;
+  overflow-x: hidden;
 }
 
 header {
@@ -59,7 +60,7 @@ header h1 {
 }
 
 .sectionBtns button:hover {
-  transform: translateY(-3px) scale(1.05);
+  transform: translateY(-3px) scale(1.05) rotate(-1deg);
   background: linear-gradient(to right, #0288d1, #01579b);
 }
 
@@ -75,12 +76,17 @@ header h1 {
   border-radius: 12px;
   padding: 15px;
   box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-  transition: transform 0.2s, box-shadow 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s, opacity 0.5s;
+  opacity: 0;
+}
+
+.team-card.visible {
+  opacity: 1;
 }
 
 .team-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 18px rgba(0,0,0,0.2);
+  transform: translateY(-7px) scale(1.03);
+  box-shadow: 0 12px 20px rgba(0,0,0,0.25);
 }
 
 .team-card h3 {
@@ -93,6 +99,11 @@ header h1 {
   display: block;
   margin: 10px 0;
   border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.team-photo:hover {
+  transform: scale(1.05);
 }
 
 .members {
@@ -105,6 +116,12 @@ header h1 {
   font-size: 13px;
   color: #333;
   margin-top: 8px;
+  transition: opacity 0.5s;
+  opacity: 0;
+}
+
+.match-list.visible {
+  opacity: 1;
 }
 
 .show-matches-btn {
@@ -120,7 +137,7 @@ header h1 {
 }
 
 .show-matches-btn:hover {
-  transform: scale(1.05);
+  transform: scale(1.08) rotate(-1deg);
   background: linear-gradient(to right, #00acc1, #00838f);
 }
 
@@ -208,7 +225,7 @@ const teamList = document.getElementById("teamList");
 function renderTeams() {
   const teams = teamsData[currentSection];
   teamList.innerHTML = "";
-  teams.forEach(t => {
+  teams.forEach((t, index) => {
     const sortedMembers = t.members.split(',').map(m => m.trim()).sort().join(', ');
 
     const card = document.createElement("div");
@@ -244,9 +261,13 @@ function renderTeams() {
           matchList.appendChild(mDiv);
         });
       }
+      matchList.classList.add("visible");
     });
 
     teamList.appendChild(card);
+
+    // Animazione fade-in progressive
+    setTimeout(() => card.classList.add("visible"), index * 150);
   });
 }
 
