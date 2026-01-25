@@ -94,7 +94,8 @@ function saveTeamsData(data){
 }
 
 function saveTeam(){
-  const category = document.getElementById("category").value;
+  const categorySelect = document.getElementById("category");
+  const category = categorySelect.options[categorySelect.selectedIndex].value; // Prende esattamente il valore selezionato
   const name = document.getElementById("team-name").value.trim();
   const members = document.getElementById("team-members").value.trim();
   const photo = document.getElementById("team-photo").value.trim();
@@ -103,7 +104,7 @@ function saveTeam(){
 
   const data = getTeamsData();
   data[category] = data[category] || [];
-  // Controllo se squadra già presente
+
   const existingIndex = data[category].findIndex(t => t.name === name);
   if(existingIndex !== -1){
     data[category][existingIndex] = {name, members, photo, matches: data[category][existingIndex].matches || []};
@@ -113,7 +114,6 @@ function saveTeam(){
 
   saveTeamsData(data);
   document.getElementById("team-message").innerHTML = "Squadra salvata!";
-  // Reset campi
   document.getElementById("team-name").value = "";
   document.getElementById("team-members").value = "";
   document.getElementById("team-photo").value = "";
@@ -121,7 +121,8 @@ function saveTeam(){
 
 // === Funzioni salvataggio gare ===
 function addMatch(){
-  const category = document.getElementById("match-category").value;
+  const categorySelect = document.getElementById("match-category");
+  const category = categorySelect.options[categorySelect.selectedIndex].value; // prende valore corretto
   const teamName = document.getElementById("match-team").value.trim();
   const date = document.getElementById("match-date").value;
   const opponent = document.getElementById("match-opponent").value.trim();
@@ -138,7 +139,6 @@ function addMatch(){
   saveTeamsData(data);
 
   document.getElementById("match-message").innerHTML = "Gara aggiunta!";
-  // Reset campi
   document.getElementById("match-team").value = "";
   document.getElementById("match-date").value = "";
   document.getElementById("match-opponent").value = "";
