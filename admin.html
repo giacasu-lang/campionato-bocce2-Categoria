@@ -94,8 +94,7 @@ function saveTeamsData(data){
 }
 
 function saveTeam(){
-  const categorySelect = document.getElementById("category");
-  const category = categorySelect.options[categorySelect.selectedIndex].value; // Prende esattamente il valore selezionato
+  const category = document.getElementById("category").value; // prende esattamente il valore selezionato
   const name = document.getElementById("team-name").value.trim();
   const members = document.getElementById("team-members").value.trim();
   const photo = document.getElementById("team-photo").value.trim();
@@ -121,8 +120,7 @@ function saveTeam(){
 
 // === Funzioni salvataggio gare ===
 function addMatch(){
-  const categorySelect = document.getElementById("match-category");
-  const category = categorySelect.options[categorySelect.selectedIndex].value; // prende valore corretto
+  const category = document.getElementById("match-category").value; // prende valore corretto
   const teamName = document.getElementById("match-team").value.trim();
   const date = document.getElementById("match-date").value;
   const opponent = document.getElementById("match-opponent").value.trim();
