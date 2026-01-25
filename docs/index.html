@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campionato Bocce 2°/3° Categoria, Juniores e Femminile</title>
+<title>Campionato Bocce 2°, 3° Categoria, Juniores e Femminile</title>
 <style>
 body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: linear-gradient(to bottom, #e0f7fa, #fffde7); color: #333; }
 header { background: #0288d1; color: white; text-align: center; padding: 20px 10px; }
@@ -20,7 +20,7 @@ h2 { color: #0277bd; margin-top: 40px; }
 <body>
 
 <header>
-  <h1>Campionato Bocce 2°/3° Categoria, Juniores e Femminile</h1>
+  <h1>Campionato Bocce 2°, 3° Categoria, Juniores e Femminile</h1>
 </header>
 
 <section id="teams-section">
@@ -37,7 +37,12 @@ h2 { color: #0277bd; margin-top: 40px; }
 // === Funzioni lettura dati da localStorage ===
 function getTeamsData(){
   const data = localStorage.getItem("teamsData");
-  return data ? JSON.parse(data) : { "2° Categoria": [], "3° Categoria": [], juniores: [], femminile: [] };
+  return data ? JSON.parse(data) : {
+    "2° Categoria": [],
+    "3° Categoria": [],
+    "juniores": [],
+    "femminile": []
+  };
 }
 
 // === Ordina membri alfabeticamente ===
