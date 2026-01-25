@@ -64,6 +64,10 @@ header h1 {
   background: linear-gradient(to right, #0288d1, #01579b);
 }
 
+.sectionBtns button:active {
+  transform: scale(1.1) rotate(-2deg);
+}
+
 #teamList {
   margin-top: 25px;
   display: grid;
@@ -89,6 +93,10 @@ header h1 {
   box-shadow: 0 12px 20px rgba(0,0,0,0.25);
 }
 
+.team-card:hover .team-photo {
+  transform: scale(1.07) rotate(2deg);
+}
+
 .team-card h3 {
   margin: 0;
   color: #0277bd;
@@ -102,10 +110,6 @@ header h1 {
   transition: transform 0.3s;
 }
 
-.team-photo:hover {
-  transform: scale(1.05);
-}
-
 .members {
   font-size: 14px;
   color: #555;
@@ -116,12 +120,14 @@ header h1 {
   font-size: 13px;
   color: #333;
   margin-top: 8px;
-  transition: opacity 0.5s;
+  transition: opacity 0.5s, transform 0.5s;
   opacity: 0;
+  transform: translateY(20px);
 }
 
 .match-list.visible {
   opacity: 1;
+  transform: translateY(0);
 }
 
 .show-matches-btn {
