@@ -83,10 +83,15 @@ function login() {
   }
 }
 
-// === Funzioni salvataggio squadre ===
+// === Funzioni gestione squadre ===
+const allCategories = ["2° Categoria", "3° Categoria", "juniores", "femminile"];
+
 function getTeamsData(){
   const data = localStorage.getItem("teamsData");
-  return data ? JSON.parse(data) : { "2° Categoria": [], "3° Categoria": [], "juniores": [], "femminile": [] };
+  const parsed = data ? JSON.parse(data) : {};
+  // Assicura che tutte le categorie esistano sempre
+  allCategories.forEach(cat => { if(!parsed[cat]) parsed[cat] = []; });
+  return parsed;
 }
 
 function saveTeamsData(data){
@@ -94,16 +99,14 @@ function saveTeamsData(data){
 }
 
 function saveTeam(){
-  const category = document.getElementById("category").value; // prende esattamente il valore selezionato
+  const category = document.getElementById("category").value;
   const name = document.getElementById("team-name").value.trim();
   const members = document.getElementById("team-members").value.trim();
   const photo = document.getElementById("team-photo").value.trim();
 
-  if(!name) { alert("Inserisci il nome della squadra"); return; }
+  if(!name){ alert("Inserisci il nome della squadra"); return; }
 
   const data = getTeamsData();
-  data[category] = data[category] || [];
-
   const existingIndex = data[category].findIndex(t => t.name === name);
   if(existingIndex !== -1){
     data[category][existingIndex] = {name, members, photo, matches: data[category][existingIndex].matches || []};
@@ -118,15 +121,15 @@ function saveTeam(){
   document.getElementById("team-photo").value = "";
 }
 
-// === Funzioni salvataggio gare ===
+// === Funzioni gestione gare ===
 function addMatch(){
-  const category = document.getElementById("match-category").value; // prende valore corretto
+  const category = document.getElementById("match-category").value;
   const teamName = document.getElementById("match-team").value.trim();
   const date = document.getElementById("match-date").value;
   const opponent = document.getElementById("match-opponent").value.trim();
   const location = document.getElementById("match-location").value.trim();
 
-  if(!teamName || !date) { alert("Compila nome squadra e data"); return; }
+  if(!teamName || !date){ alert("Compila nome squadra e data"); return; }
 
   const data = getTeamsData();
   const team = data[category].find(t => t.name === teamName);
